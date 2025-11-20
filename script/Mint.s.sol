@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "forge-std/Script.sol";
-import "../src/CertiFi.sol";
+import {Script} from "forge-std/Script.sol";
+import {CertiFi} from "../src/CertiFi.sol";
 
 /// @notice Script per salvare un hash on-chain richiamando storeHash
 contract StoreHashCertiFi is Script {
