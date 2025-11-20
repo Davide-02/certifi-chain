@@ -5,9 +5,10 @@ import "forge-std/Script.sol";
 import "../src/CertiFi.sol";
 
 contract DeployCertiFi is Script {
-    function run() external {
+    function run() external returns (CertiFi) {
         vm.startBroadcast();
         CertiFi cert = new CertiFi();
         vm.stopBroadcast();
+        return cert;
     }
 }

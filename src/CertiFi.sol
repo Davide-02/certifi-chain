@@ -1,30 +1,26 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "openzeppelin-contracts/contracts/token/ERC721/ERC721.sol";
-import "openzeppelin-contracts/contracts/access/Ownable.sol";
+/// @title CertiFi
+/// @notice Contratto minimale per memorizzare hash associati a identità on-chain
+contract CertiFi {
+    /// @dev mapping tra indirizzo utente e hash memorizzato
+    mapping(address => bytes32) private hashes;
 
-contract CertiFi is ERC721, Ownable {
-    uint256 public nextTokenId;
-    mapping(uint256 => string) private tokenURIs;
+    event HashStored(address indexed user, bytes32 hashValue);
 
-    constructor() ERC721("CertiFiAttestation", "CERT") Ownable(msg.sender) {}
-
-    function mint(address to, string memory metadataURI)
-        external
-        onlyOwner
-    {
-        uint256 tokenId = nextTokenId++;
-        _safeMint(to, tokenId);
-        tokenURIs[tokenId] = metadataURI;
+    /// @notice Memorizza l'hash dell'utente chiamante
+    /// @param hashValue Hash (già calcolato off-chain) da salvare
+    function storeHash(bytes32 hashValue) external {
+        require(hashValue != bytes32(0), "CertiFi: empty hash");
+        hashes[msg.sender] = hashValue;
+        emit HashStored(msg.sender, hashValue);
     }
 
-    function tokenURI(uint256 id)
-        public
-        view
-        override
-        returns (string memory)
-    {
-        return tokenURIs[id];
+    /// @notice Restituisce l'hash associato a un utente
+    /// @param user Indirizzo dell'utente
+    /// @return hashValue Hash memorizzato (bytes32)
+    function getHash(address user) external view returns (bytes32 hashValue) {
+        return hashes[user];
     }
 }
