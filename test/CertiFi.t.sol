@@ -40,4 +40,22 @@ contract CertiFiTest is Test {
         vm.expectRevert("CertiFi: empty hash");
         cert.storeHash(bytes32(0));
     }
+
+    function testVerifyHash() public {
+        bytes32 testHash = keccak256("test-identity");
+
+        // Hash non esiste ancora
+        assertFalse(cert.verify(testHash));
+
+        // Salva l'hash
+        vm.prank(address(0x123));
+        cert.storeHash(testHash);
+
+        // Ora l'hash esiste
+        assertTrue(cert.verify(testHash));
+
+        // Hash diverso non esiste
+        bytes32 otherHash = keccak256("other-identity");
+        assertFalse(cert.verify(otherHash));
+    }
 }

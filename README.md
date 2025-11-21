@@ -31,12 +31,30 @@ forge test
 
 ## Contratto minimale
 
-`CertiFi.sol` espone due sole funzioni:
+`CertiFi.sol` espone tre funzioni:
 
 - `storeHash(bytes32 hashValue)` – salva l'hash calcolato off-chain per `msg.sender`
 - `getHash(address user)` – restituisce l'hash associato a un indirizzo
+- `verify(bytes32 hash)` – verifica se un hash è stato salvato sulla blockchain (restituisce `true`/`false`)
 
 Questo è sufficiente per validare l'intero flusso identità → hash → chain.
+
+### Verifica hash dal terminale
+
+Puoi verificare se un hash esiste usando `cast`:
+
+```bash
+cast call <CONTRACT_ADDRESS> "verify(bytes32)(bool)" <HASH> --rpc-url http://127.0.0.1:8545
+```
+
+Esempio:
+
+```bash
+cast call 0x5FbDB2315678afecb367f032d93F642f64180aa3 \
+  "verify(bytes32)(bool)" \
+  0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef \
+  --rpc-url http://127.0.0.1:8545
+```
 
 ## Script
 
@@ -59,3 +77,13 @@ forge script script/Mint.s.sol \
 ```
 
 Lo script legge la variabile `IDENTITY_HASH` (bytes32) e invoca `storeHash`.
+
+### Run anvil
+
+```bash
+anvil
+
+forge script script/Deploy.s.sol --rpc-url http://127.0.0.1:8545 --broadcast --sender <tuo_address> --private-key <tua_chiave_privata>
+```
+
+Copiare contract address e sostituirlo nel BE .env
